@@ -1,0 +1,119 @@
+package sim.app.exploration.env;
+
+import java.util.Vector;
+
+import sim.engine.SimState;
+import sim.engine.Steppable;
+import sim.field.grid.SparseGrid2D;
+import sim.util.Bag;
+import sim.util.Int2D;
+import sim.app.exploration.agents.*;
+import sim.app.exploration.objects.SimObject;
+import sim.app.exploration.objects.Tree;
+import sim.app.exploration.objects.Wall;
+
+public class SimEnvironment implements Steppable{
+
+	private static final long serialVersionUID = 1L;
+
+	private SparseGrid2D world;
+	
+	private Vector<ExplorerAgent> explorers;
+	private MapperAgent mapper;
+	private BrokerAgent broker;
+	
+	public SimEnvironment(SimState state, int width, int height, int nAgents){
+		
+		this.world = new SparseGrid2D(width, height);
+		
+		this.explorers = new Vector<ExplorerAgent>(nAgents);
+		this.mapper = new MapperAgent(width, height);
+		this.broker = new BrokerAgent();
+		
+		this.setup(state);
+	}
+	
+	/**
+	 * This method should setup the environment: create the objects and populate
+	 * it with them and with the explorer agents
+	 */
+	private void setup(SimState state){
+		
+		for(int i= 0; i<explorers.capacity(); i++){
+			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
+			ExplorerAgent explorer = new ExplorerAgent(loc);
+			explorers.add(explorer);
+			
+			mapper.updateLocation(explorer,loc);
+			this.updateLocation(explorer, loc);
+			explorer.env = this;
+			explorer.mapper = mapper;
+			explorer.broker = broker;
+		}
+		
+		for(int i = 0; i<400; i++){
+			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
+			Wall w = new Wall(loc.x,loc.y);
+			world.setObjectLocation(w,loc);
+		}
+		
+		for(int i = 0; i<200; i++){
+			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
+			Tree t = new Tree(loc.x,loc.y);
+			world.setObjectLocation(t,loc);
+		}
+	}
+
+	
+	@Override
+	public void step(SimState state) {
+		
+		/*
+		 * Step over all the explorers in the environment, making them step
+		 */
+		for(ExplorerAgent agent : explorers){
+			agent.step(state);
+		}
+		
+	}
+
+	public MapperAgent getMapper() {
+		return mapper;
+	}
+
+	public BrokerAgent getBroker() {
+		return broker;
+	}
+
+	public Bag getVisibleObejcts(int x, int y, int viewRange) {
+		
+		Bag all = world.getNeighborsHamiltonianDistance(x, y, viewRange, false, null, null, null);
+		Bag visible = new Bag();
+		
+		for(Object b: all){
+			if(b instanceof ExplorerAgent) continue;
+			
+			SimObject o = (SimObject) b;
+			visible.add(new SimObject(o));
+		}
+		
+		return visible;
+	}
+
+	public SimObject identifyObject(SimObject obj) {
+		
+		Bag here = world.getObjectsAtLocation(obj.getLoc().x, obj.getLoc().y);
+		int i = 0;
+		while(here.get(i) instanceof ExplorerAgent) i++;
+		
+		SimObject real = (SimObject) here.get(i);
+		
+		return real;
+	}
+
+	public void updateLocation(ExplorerAgent agent, Int2D loc) {
+		
+		world.setObjectLocation(agent, loc);	
+	}
+
+}

@@ -1,0 +1,42 @@
+package sim.app.exploration.core;
+
+import sim.app.exploration.env.SimEnvironment;
+import sim.engine.SimState;
+
+/**
+ * A simple demo intended to serve as an example of the Mason simulation tool.
+ * This simulation puts a couple of exploring agents on a grid-field and has them
+ * communicate with a master agent to pick the next location to go to and share the
+ * mapping information;
+ * @author Miguel Tavares, Pedro Gaspar
+ *
+ */
+public class Simulator extends SimState{
+
+	private static final long serialVersionUID = 1L;
+	
+	private final static int N_EXPLORERS = 5;
+	public final static int WIDTH = 400;
+	public final static int HEIGHT = 300;
+	
+	public SimEnvironment env;
+	
+	/**
+	 * Default constructor that creates a new instance of the simulator
+	 * @param seed Seed for the random number generator
+	 */
+	public Simulator(long seed) {
+		super(seed);
+	}
+	
+	/**
+	 * Start the simulation. Schedule the environment to iterate.
+	 */
+	public void start(){
+		super.start();
+		env = new SimEnvironment(this, WIDTH, HEIGHT, N_EXPLORERS);
+		schedule.scheduleRepeating(env);
+		// Now, everything else is up to the environment
+	}
+
+}

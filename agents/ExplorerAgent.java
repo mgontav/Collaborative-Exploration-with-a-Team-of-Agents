@@ -44,6 +44,11 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D{
 			
 			if(Utils.getDistance(this, obj) < identifyRange){
 				obj = env.identifyObject(obj);
+				broker.removePointOfInterest(obj.loc);
+			}
+			else {
+				// If not identified
+				broker.addPointOfInterest(obj.loc, 100);	// 100 interest for now...
 			}
 			toMapper.add(obj);
 		}
@@ -59,8 +64,8 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D{
 		
 		// If the explorer has no target, he has to request a new one from the broker
 		if(target == null){
-			target = broker.requestTarget();
-			System.out.println("NEW TARGET: X: " + target.x + " Y: " + target.y);
+			target = broker.requestTarget(loc);
+			 System.out.println("NEW TARGET: X: " + target.x + " Y: " + target.y);
 		}
 		
 		Double2D step = new Double2D(target.x - loc.x, target.y-loc.y);

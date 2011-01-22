@@ -8,20 +8,21 @@ import sim.util.Int2D;
 public class BrokerAgent {
 	
 	private ArrayList<PointOfInterest> pointsOfInterest;
-	private int limitRadius;
+	private ArrayList<PointOfInterest> removedPoIs;
 	
 	public BrokerAgent() {
-		calculateLimitRadius();
 		this.pointsOfInterest = new ArrayList<PointOfInterest>();
+		this.removedPoIs = new ArrayList<PointOfInterest>();
 	}
 	
-	public Int2D requestTarget() {
+	public Int2D requestTarget(Int2D agentPos) {
 		Int2D target = null;
-		Int2D agentPos = new Int2D(0, 0);
+		PointOfInterest target_PoI = null;
 		
 		// If we have no points of interest, return a random point
 		if (pointsOfInterest.size() == 0)
-			target = new Int2D((int)(Math.random()*Simulator.WIDTH), (int)(Math.random()*Simulator.HEIGHT)); 
+			return getLimitedRandomTarget(agentPos);
+			//return getRandomTarget();
 		
 		// Else, find the best point of Interest
 		else {
@@ -30,12 +31,25 @@ public class BrokerAgent {
 			double score;
 			
 			for (PointOfInterest PoI : pointsOfInterest) {
-				score = PoI.interestMeasure - ( (agentPos.distance(PoI.point) * 100) / limitRadius);
+				score = PoI.interestMeasure - ( (agentPos.distance(PoI.loc) * 100) / Simulator.limitRadius);
+				
+				System.out.println("[Broker] Score for " + PoI + ": " + score);
 				
 				if (score > bestScore) {
 					bestScore = score;
-					target = PoI.point;
-				}	
+					target = PoI.loc;
+					target_PoI = PoI;
+				}
+			}
+			
+			// If the target is too far, send a random target
+			if (bestScore < 0)
+				return getLimitedRandomTarget(agentPos);
+			
+			// Remove the target from the list of Points of Interest and add it to the removed list (this should be done when you arrive at the point if you're constantly calculating new targets)
+			if (target_PoI != null) {
+				pointsOfInterest.remove(target_PoI);
+				removedPoIs.add(target_PoI);
 			}
 			
 			System.out.println("[Broker] Best score: " + bestScore);
@@ -47,20 +61,59 @@ public class BrokerAgent {
 	
 	public void addPointOfInterest(Int2D point, double interestMeasure) {
 		PointOfInterest PoI = new PointOfInterest(point, interestMeasure);
-		pointsOfInterest.add(PoI);
+		
+		if (!pointsOfInterest.contains(PoI) && !removedPoIs.contains(PoI)) {
+			pointsOfInterest.add(PoI);
+			System.out.println("[Broker] PoI added: " + PoI.loc);
+		}
 	}
 	
-	private int calculateLimitRadius() {
-		return (int) (Math.max(Simulator.WIDTH, Simulator.HEIGHT) * 0.25);	// The 0.25 should be RAIUS_RATIO or something
+	public void removePointOfInterest(Int2D loc) {
+		PointOfInterest tmp = new PointOfInterest(loc, 1);
+		
+		if (pointsOfInterest.contains(tmp)) {
+			System.out.println("[Broker] Removing " + loc + " ("+ pointsOfInterest.size() + ")");
+			pointsOfInterest.remove(tmp);
+			System.out.println("[Broker] Now with " + pointsOfInterest.size());
+			
+			removedPoIs.add(tmp);
+		}
+	}
+	
+	public Int2D getLimitedRandomTarget(Int2D agentPos) {
+		Int2D target = null;
+		
+		while (true) {
+			target = getRandomTarget();
+			if (agentPos.distance(target) <= Simulator.limitRadius)
+				break;
+		}
+		
+		return target; 
+	}
+	
+	public Int2D getRandomTarget() {
+		return new Int2D((int)(Math.random()*Simulator.WIDTH), (int)(Math.random()*Simulator.HEIGHT)); 
 	}
 }
 
+
 class PointOfInterest {
-	public Int2D point;
+	public Int2D loc;
 	public double interestMeasure;	// I expect this to be in [0, 100]
 	
-	PointOfInterest(Int2D point, double interestMeasure) {
-		this.point = point;
+	PointOfInterest(Int2D loc, double interestMeasure) {
+		this.loc = loc;
 		this.interestMeasure = interestMeasure;
+	}
+	
+	@Override
+	public boolean equals(Object o_PoI) {
+		PointOfInterest PoI = (PointOfInterest) o_PoI;
+		return this.loc.equals(PoI.loc);
+	}
+	
+	public String toString() {
+		return "[" + loc.x + ", " + loc.y + " - " + interestMeasure + "]";
 	}
 }

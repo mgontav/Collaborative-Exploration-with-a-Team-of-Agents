@@ -18,6 +18,7 @@ public class Simulator extends SimState{
 	private final static int N_EXPLORERS = 5;
 	public final static int WIDTH = 400;
 	public final static int HEIGHT = 300;
+	public final static int limitRadius = (int) (Math.max(WIDTH, HEIGHT) * 0.25);	// The 0.25 should be RAIUS_RATIO or something
 	
 	public SimEnvironment env;
 	

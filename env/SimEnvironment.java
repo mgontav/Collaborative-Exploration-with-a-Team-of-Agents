@@ -100,9 +100,9 @@ public class SimEnvironment implements Steppable{
 		return visible;
 	}
 
-	public SimObject identifyObject(SimObject obj) {
+	public SimObject identifyObject(Int2D loc) {
 		
-		Bag here = world.getObjectsAtLocation(obj.getLoc().x, obj.getLoc().y);
+		Bag here = world.getObjectsAtLocation(loc.x, loc.y);
 		int i = 0;
 		while(here.get(i) instanceof ExplorerAgent) i++;
 		

@@ -1,5 +1,7 @@
 package sim.app.exploration.agents;
 
+import java.util.Hashtable;
+
 import sim.app.exploration.env.SimEnvironment;
 import sim.app.exploration.objects.SimObject;
 import sim.app.exploration.utils.Utils;
@@ -12,6 +14,8 @@ import sim.util.Int2D;
 public class ExplorerAgent implements sim.portrayal.Oriented2D{
 
 	private static final long serialVersionUID = 1L;
+	private float INTEREST_THRESHOLD = 50;
+	
 	private final double STEP = Math.sqrt(2);
 	private final int viewRange = 6; 
 	private final double identifyRange = 2.0;
@@ -37,28 +41,42 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D{
 		
 		Bag visible = env.getVisibleObejcts(loc.x, loc.y, viewRange);
 		
-		Bag toMapper = new Bag();
 		
-		for(int i = 0; i<visible.size(); i++){
+		//-------------------------------------------------------------
+		for(int i = 1; i<visible.size(); i++){
 			SimObject obj = (SimObject) visible.get(i);
-			
-			if(Utils.getDistance(this, obj) < identifyRange){
-				obj = env.identifyObject(obj);
-				broker.removePointOfInterest(obj.loc);
+
+			if( !mapper.isIdentified(obj.loc) ){
+				Hashtable<Class,Float> probs = getProbabilityDist(obj);
+
+				float interest = getObjectInterest(probs);
+
+				//If not interesting enough, classify it to the highest prob
+				if(interest < INTEREST_THRESHOLD){
+					Class highest = Utils.getHighestProb(probs);
+					
+					mapper.identify(obj,highest);
+					broker.removePointOfInterest(obj.loc);
+					
+				}else{
+					mapper.addObject(obj);
+					broker.addPointOfInterest(obj.loc, interest);
+					
+				}
 			}
-			else {
-				// If not identified
-				broker.addPointOfInterest(obj.loc, 100);	// 100 interest for now...
-			}
-			toMapper.add(obj);
+
 		}
-		
-		mapper.addVisibleObjects(toMapper);
+		//--------------------------------------------------------------
 		
 		// Check to see if the explorer has reached its target
 		if(target != null){
 			if(loc.distance(target) == 0){
 				target = null;
+				
+				SimObject obj = env.identifyObject(loc);
+				broker.removePointOfInterest(obj.loc);
+				mapper.identify(obj, obj.getClass());
+				
 			}
 		}
 		
@@ -68,6 +86,7 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D{
 			 System.out.println("NEW TARGET: X: " + target.x + " Y: " + target.y);
 		}
 		
+		//Agent movement
 		Double2D step = new Double2D(target.x - loc.x, target.y-loc.y);
 		step.limit(STEP);
 		

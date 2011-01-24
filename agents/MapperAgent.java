@@ -1,5 +1,8 @@
 package sim.app.exploration.agents;
 
+import java.awt.Color;
+import java.lang.reflect.Constructor;
+
 import sim.app.exploration.objects.SimObject;
 import sim.app.exploration.objects.Wall;
 import sim.field.grid.SparseGrid2D;
@@ -9,9 +12,11 @@ import sim.util.Int2D;
 public class MapperAgent {
 
 	public SparseGrid2D knownWorld;
+	public Class[][] identifiedObjects;
 	
 	public MapperAgent(int width, int height){
 		knownWorld = new SparseGrid2D(width, height);
+		identifiedObjects = new Class[width][height];
 	}
 	
 	/**
@@ -34,20 +39,58 @@ public class MapperAgent {
 		}
 	}
 
-	/**
-	 * Adds a wall to the world.
-	 * Ideally, this is just one of many methods, that should add a variety of 
-	 * objects to the world
-	 * @param w
-	 */
-	private void addWall(Wall w) {
-		
-		knownWorld.setObjectLocation(w, w.getLoc().x, w.getLoc().y);
-	}
 
 	public void updateLocation(ExplorerAgent agent, Int2D loc) {
 		
 		knownWorld.setObjectLocation(agent,loc);
+		
+	}
+
+	
+	public boolean isIdentified(Int2D loc) {
+		
+		return identifiedObjects[loc.x][loc.y] != null;
+	}
+
+	
+	public void identify(SimObject obj, Class highest) {
+		
+		Int2D loc = obj.loc;
+		
+		identifiedObjects[loc.x][loc.y] = highest;
+	
+		Class[] params = {Int2D.class, Color.class, double.class};
+		Object[] args = {obj.loc, obj.color, obj.size};
+		
+		if(highest.isInstance(obj)){
+			this.addObject(obj);
+			
+		}else{
+			try{
+				Constructor c = highest.getConstructor(params);
+				SimObject newObj = (SimObject) c.newInstance(args);
+				this.addObject(newObj);
+				
+			}catch (Exception e){
+				System.err.println("No such constructor, please give up on life.");
+			}
+		}
+
+	}
+
+	public void addObject(SimObject obj) {
+		// TODO Auto-generated method stub
+		Int2D loc = obj.loc;
+		
+		Bag here = new Bag(knownWorld.getObjectsAtLocation(loc.x, loc.y));
+		
+		for(Object o : here){
+			if(! (o instanceof ExplorerAgent) ){
+				knownWorld.remove(o);
+			}
+		}
+		
+		knownWorld.setObjectLocation(obj, loc);
 		
 	}
 

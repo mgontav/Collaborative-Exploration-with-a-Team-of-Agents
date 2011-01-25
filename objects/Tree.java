@@ -18,6 +18,9 @@ public class Tree extends SimObject{
 		super(new Int2D(x,y), Color.GREEN, size);
 	}
 	
+	public Tree(Int2D loc, Color color, double size){
+		super(loc, color, size);
+	}
 	
 	public static Portrayal getPortrayal(){
 		return new RectanglePortrayal2D(Color.GREEN, size);

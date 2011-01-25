@@ -18,6 +18,10 @@ public class Wall extends SimObject{
 		super(new Int2D(x,y), Color.GRAY, size);
 	}
 	
+	public Wall(Int2D loc, Color color, double size){
+		super(loc,color,size);
+	}
+	
 	
 	public static Portrayal getPortrayal(){
 		return new RectanglePortrayal2D(Color.GRAY, size);

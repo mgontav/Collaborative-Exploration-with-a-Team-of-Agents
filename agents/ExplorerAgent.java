@@ -1,8 +1,10 @@
 package sim.app.exploration.agents;
 
 import java.util.Hashtable;
+import java.util.Vector;
 
 import sim.app.exploration.env.SimEnvironment;
+import sim.app.exploration.objects.Prototype;
 import sim.app.exploration.objects.SimObject;
 import sim.app.exploration.utils.Utils;
 import sim.engine.SimState;
@@ -14,10 +16,10 @@ import sim.util.Int2D;
 public class ExplorerAgent implements sim.portrayal.Oriented2D{
 
 	private static final long serialVersionUID = 1L;
-	private float INTEREST_THRESHOLD = 50;
+	private float INTEREST_THRESHOLD = 70;
 	
 	private final double STEP = Math.sqrt(2);
-	private final int viewRange = 6; 
+	private final int viewRange = 50; 
 	private final double identifyRange = 2.0;
 	
 	private Int2D loc;
@@ -28,11 +30,13 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D{
 	public SimEnvironment env;
 	public BrokerAgent broker;
 	public MapperAgent mapper;
+	private Vector<Prototype> knownObjects;
 	
 	public ExplorerAgent(Int2D loc) {
 		this.loc = loc;
 		this.orientation = 0;
 		this.target = null;
+		this.knownObjects = new Vector<Prototype>();
 	}
 
 	public void step(SimState state) {
@@ -46,16 +50,31 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D{
 		for(int i = 1; i<visible.size(); i++){
 			SimObject obj = (SimObject) visible.get(i);
 
+						
 			if( !mapper.isIdentified(obj.loc) ){
-				Hashtable<Class,Float> probs = getProbabilityDist(obj);
+				Hashtable<Class,Double> probs = getProbabilityDist(obj);
 
 				float interest = getObjectInterest(probs);
-
+				System.out.println("OBJECT AT: (" + obj.loc.x + "," + obj.loc.y + "). INTEREST: " + interest);
+				
 				//If not interesting enough, classify it to the highest prob
 				if(interest < INTEREST_THRESHOLD){
 					Class highest = Utils.getHighestProb(probs);
 					
 					mapper.identify(obj,highest);
+					Class real = env.identifyObject(obj.loc).getClass();
+					if(highest != real){
+						System.err.println(real.getSimpleName());
+						System.err.println(real.getSimpleName());
+						System.err.println(real.getSimpleName());
+						System.err.println(real.getSimpleName());
+						System.err.println(real.getSimpleName());
+						System.err.println(real.getSimpleName());
+						System.err.println(real.getSimpleName());
+					}
+					
+					System.out.println();
+					//addPrototype(obj, highest);
 					broker.removePointOfInterest(obj.loc);
 					
 				}else{
@@ -74,9 +93,12 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D{
 				target = null;
 				
 				SimObject obj = env.identifyObject(loc);
-				broker.removePointOfInterest(obj.loc);
-				mapper.identify(obj, obj.getClass());
 				
+				if(obj != null){
+					broker.removePointOfInterest(obj.loc);
+					mapper.identify(obj, obj.getClass());
+					addPrototype(obj, obj.getClass());
+				}
 			}
 		}
 		
@@ -97,6 +119,81 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D{
 		mapper.updateLocation(this,loc);
 		
 		orientation = Math.atan2(Math.round(step.y),Math.round(step.x));
+	}
+
+	private int getObjectInterest(Hashtable<Class, Double> probs) {
+		double unknownInterest = 0;
+		double entropyInterest;
+		Vector<Double> prob = new Vector<Double>();
+		
+		for(Class c : probs.keySet()){
+			if(c == SimObject.class)
+				unknownInterest = Utils.interestFunction(probs.get(c));
+			
+			prob.add(probs.get(c));
+		}
+		
+		entropyInterest = Utils.entropy(prob);
+		
+		System.out.println("ENTROPY: " + entropyInterest + " | UNKNOWN: " + unknownInterest);
+		
+		double interest = (entropyInterest > unknownInterest? entropyInterest : unknownInterest) * 100;
+		
+		return (int) Math.round(interest);
+	}
+
+	private void addPrototype(SimObject obj, Class class1) {
+		// TODO Auto-generated method stub
+		for(Prototype p : knownObjects){
+			if(class1 == p.thisClass){
+				p.addOccurrence(obj.size, obj.color);
+				return;
+			}
+		}
+		
+		knownObjects.add(new Prototype(class1, obj.size, obj.color));
+	}
+	
+
+	private Hashtable<Class, Double> getProbabilityDist(SimObject obj) {
+		
+		Hashtable<Class, Double> probs = new Hashtable<Class, Double>();
+		
+		//TODO: Implement global knowledge
+		
+		Vector<Prototype> prototypes = this.knownObjects;
+		int nClasses = prototypes.size();
+		double unknownCorr = 0;
+		double corrSum = 0;
+		
+		for( Prototype prot: prototypes ){
+			//TODO: Stuff here
+			double corr;
+			double colorDist = Utils.colorDistance(obj.color, prot.color);
+			double sizeDist = Math.abs(obj.size - prot.size)/Utils.MAX_SIZE;
+			
+			//Correlation
+			corr = 1 - (0.5*colorDist + 0.5*sizeDist);
+			//Saturation
+			corr = Utils.saturate(corr, prot.nOccurrs);
+			
+			probs.put(prot.thisClass, corr);
+			corrSum += corr;
+			
+			unknownCorr += (1 - corr)/nClasses;
+		}
+		
+		if(nClasses == 0) unknownCorr = 1.0;
+		probs.put(SimObject.class, unknownCorr);
+		corrSum += unknownCorr;
+		
+		for( Class c: probs.keySet() ){
+			System.out.println(c.getSimpleName() + " : " + probs.get(c));
+			probs.put(c, probs.get(c)/corrSum);
+		}
+		
+		
+		return probs;
 	}
 
 	@Override

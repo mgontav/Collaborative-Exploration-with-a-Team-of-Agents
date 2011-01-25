@@ -104,7 +104,12 @@ public class SimEnvironment implements Steppable{
 		
 		Bag here = world.getObjectsAtLocation(loc.x, loc.y);
 		int i = 0;
-		while(here.get(i) instanceof ExplorerAgent) i++;
+		
+		if(here == null){
+			return null;
+		}
+		
+		while((here.get(i) instanceof ExplorerAgent) && i<here.numObjs) i++;
 		
 		SimObject real = (SimObject) here.get(i);
 		

@@ -55,6 +55,8 @@ public class MapperAgent {
 	
 	public void identify(SimObject obj, Class highest) {
 		
+		System.out.println("IDENTIFYING OBJ AT (" + obj.loc.x + "," + obj.loc.y + ") AS " + highest.getName());
+		
 		Int2D loc = obj.loc;
 		
 		identifiedObjects[loc.x][loc.y] = highest;
@@ -82,11 +84,15 @@ public class MapperAgent {
 		// TODO Auto-generated method stub
 		Int2D loc = obj.loc;
 		
-		Bag here = new Bag(knownWorld.getObjectsAtLocation(loc.x, loc.y));
+		Bag temp = knownWorld.getObjectsAtLocation(loc.x, loc.y);
 		
-		for(Object o : here){
-			if(! (o instanceof ExplorerAgent) ){
-				knownWorld.remove(o);
+		if(temp != null){
+			Bag here = new Bag(temp);
+			
+			for(Object o : here){
+				if(! (o instanceof ExplorerAgent) ){
+					knownWorld.remove(o);
+				}
 			}
 		}
 		

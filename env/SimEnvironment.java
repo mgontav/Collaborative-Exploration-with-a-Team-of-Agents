@@ -12,6 +12,7 @@ import sim.app.exploration.objects.Bush;
 import sim.app.exploration.objects.SimObject;
 import sim.app.exploration.objects.Tree;
 import sim.app.exploration.objects.Wall;
+import sim.app.exploration.objects.Water;
 
 public class SimEnvironment implements Steppable{
 
@@ -81,6 +82,15 @@ public class SimEnvironment implements Steppable{
 			//System.out.println("Tree:\t"+t.color.getRed()+"\t"+t.color.getGreen()+"\t"+t.color.getBlue()+"\t"+t.getSize());
 			
 			world.setObjectLocation(b,loc);
+		}
+		
+		for(int i = 0; i<100; i++){
+			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
+			Water w = new Water(loc.x,loc.y);
+			
+			//System.out.println("Tree:\t"+t.color.getRed()+"\t"+t.color.getGreen()+"\t"+t.color.getBlue()+"\t"+t.getSize());
+			
+			world.setObjectLocation(w,loc);
 		}
 	}
 

@@ -10,7 +10,7 @@ public class Bush extends SimObject{
 	
 	public static double size = 2.0;
 	
-	public static final int RED_DELTA = 0;
+	public static final int RED_DELTA = 10;
 	public static final int GREEN_DELTA = 60;
 	public static final int BLUE_DELTA = 0;
 	public static final double SIZE_DELTA = 0.2;

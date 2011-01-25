@@ -4,9 +4,11 @@ import java.awt.Color;
 import javax.swing.JFrame;
 
 import sim.app.exploration.agents.ExplorerAgent;
+import sim.app.exploration.objects.Bush;
 import sim.app.exploration.objects.SimObject;
 import sim.app.exploration.objects.Tree;
 import sim.app.exploration.objects.Wall;
+import sim.app.exploration.objects.Water;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -59,7 +61,7 @@ public class Viewer extends GUIState{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void setupPortrayals(){
 		// tell the portrayals what to portray and how to portray them
-	    Class objects[] = {Tree.class, Wall.class, SimObject.class};
+	    Class objects[] = {Tree.class, Wall.class, SimObject.class, Bush.class, Water.class};
 		
 		
 	    knownWorld.setField( ((Simulator)state).env.getMapper().knownWorld);

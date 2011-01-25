@@ -2,6 +2,7 @@ package sim.app.exploration.utils;
 
 import java.awt.Color;
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.Vector;
 
 import sim.app.exploration.agents.ExplorerAgent;
@@ -89,5 +90,15 @@ public class Utils {
 		Color avg = new Color((int)((r1+r2)/2.0), (int)((g1+g2)/2.0), (int)((b1+b2)/2.0));
 				
 		return avg;
+	}
+	
+	public static int getRandomRange(int baseline, int delta) {
+		if (delta == 0) return baseline;
+		return (new Random()).nextInt(2*delta + 1) + (baseline - delta);
+	}
+	
+	public static double getRandomRange(double baseline, double delta) {
+		if (delta == 0) return baseline;
+		return Math.random()*(2*delta) + (baseline - delta);
 	}
 }

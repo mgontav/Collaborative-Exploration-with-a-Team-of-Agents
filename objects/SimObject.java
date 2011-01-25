@@ -2,12 +2,13 @@ package sim.app.exploration.objects;
 
 import java.awt.Color;
 
+import sim.app.exploration.utils.Utils;
 import sim.portrayal.Portrayal;
 import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.util.Int2D;
 
 public class SimObject {
-
+	
 	public Int2D loc;
 	public Color color;
 	public double size;
@@ -24,6 +25,16 @@ public class SimObject {
 		this.loc = l;
 		this.color = c;
 		this.size = s;
+	}
+	
+	protected void introduceRandomness(int RED_DELTA, int GREEN_DELTA, int BLUE_DELTA, double SIZE_DELTA) {
+		this.color = new Color(
+				Math.max(Math.min(Utils.getRandomRange(color.getRed(), RED_DELTA), 255), 0), 		// RED
+				Math.max(Math.min(Utils.getRandomRange(color.getGreen(), GREEN_DELTA), 255), 0),	// GREEN
+				Math.max(Math.min(Utils.getRandomRange(color.getBlue(), BLUE_DELTA), 255), 0)		// BLUE
+				);
+		
+		this.size = Utils.getRandomRange(size, SIZE_DELTA);
 	}
 
 	public Int2D getLoc() {

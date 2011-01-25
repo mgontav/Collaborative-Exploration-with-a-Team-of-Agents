@@ -8,6 +8,7 @@ import sim.field.grid.SparseGrid2D;
 import sim.util.Bag;
 import sim.util.Int2D;
 import sim.app.exploration.agents.*;
+import sim.app.exploration.objects.Bush;
 import sim.app.exploration.objects.SimObject;
 import sim.app.exploration.objects.Tree;
 import sim.app.exploration.objects.Wall;
@@ -51,16 +52,35 @@ public class SimEnvironment implements Steppable{
 			explorer.broker = broker;
 		}
 		
+		//System.out.println("\n\nWALL:\t" + Wall.RED_DELTA + "\t"+Wall.GREEN_DELTA+"\t"+Wall.BLUE_DELTA+"\t"+Wall.SIZE_DELTA+"\n");
+		
 		for(int i = 0; i<400; i++){
 			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
 			Wall w = new Wall(loc.x,loc.y);
+			
+			//System.out.println("Wall:\t"+w.color.getRed()+"\t"+w.color.getGreen()+"\t"+w.color.getBlue()+"\t"+w.getSize());
+			
 			world.setObjectLocation(w,loc);
 		}
+		
+		//System.out.println("\n\nTREE:\t" + Tree.RED_DELTA + "\t"+Tree.GREEN_DELTA+"\t"+Tree.BLUE_DELTA+"\t"+Tree.SIZE_DELTA+"\n");
 		
 		for(int i = 0; i<200; i++){
 			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
 			Tree t = new Tree(loc.x,loc.y);
+			
+			//System.out.println("Tree:\t"+t.color.getRed()+"\t"+t.color.getGreen()+"\t"+t.color.getBlue()+"\t"+t.getSize());
+			
 			world.setObjectLocation(t,loc);
+		}
+		
+		for(int i = 0; i<200; i++){
+			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
+			Bush b = new Bush(loc.x,loc.y);
+			
+			//System.out.println("Tree:\t"+t.color.getRed()+"\t"+t.color.getGreen()+"\t"+t.color.getBlue()+"\t"+t.getSize());
+			
+			world.setObjectLocation(b,loc);
 		}
 	}
 

@@ -11,7 +11,6 @@ import sim.field.grid.SparseGrid2D;
 import sim.util.Bag;
 import sim.util.Int2D;
 import sim.app.exploration.agents.*;
-import sim.app.exploration.core.Simulator;
 import sim.app.exploration.objects.Bush;
 import sim.app.exploration.objects.House;
 import sim.app.exploration.objects.SimObject;
@@ -38,7 +37,7 @@ public class SimEnvironment implements Steppable{
 	public SimEnvironment(SimState state, int width, int height, int nAgents){
 		
 		this.world = new SparseGrid2D(width, height);
-		this.occupied = new Class[Simulator.WIDTH][Simulator.HEIGHT];
+		this.occupied = new Class[width][height];
 		
 		this.explorers = new Vector<ExplorerAgent>(nAgents);
 		this.mapper = new MapperAgent(width, height);
@@ -62,7 +61,8 @@ public class SimEnvironment implements Steppable{
 		addExplorersRandomly(state);
 		
 		//buildRandomMap(state);
-		buildDonutMap(state);
+		//buildDonutMap(state);
+		buildWorldMap(state);
 	}
 	
 	private void addExplorersRandomly(SimState state) {
@@ -108,11 +108,11 @@ public class SimEnvironment implements Steppable{
 		int num_inner = 300;
 		
 		// Define the size of the inner square
-		int inner_width = Simulator.WIDTH / 2;
-		int inner_height = Simulator.HEIGHT / 2;
+		int inner_width = world.getWidth() / 2;
+		int inner_height = world.getHeight() / 2;
 		
-		int inner_x = (Simulator.WIDTH / 2) - (inner_width / 2);
-		int inner_y = (Simulator.HEIGHT / 2) - (inner_height / 2);
+		int inner_x = (world.getWidth() / 2) - (inner_width / 2);
+		int inner_y = (world.getHeight() / 2) - (inner_height / 2);
 		
 		// Add the outer instances
 		for(int j = 0; j < num_outer; j++) {
@@ -130,6 +130,73 @@ public class SimEnvironment implements Steppable{
 			while ( occupied[loc.x][loc.y] != null);
 			
 			addObject(inner_class, loc);
+		}
+	}
+	
+	private void buildWorldMap(SimState state) {
+		Int2D loc;
+		
+		// Number of instances per block
+		int num_instances = 500;
+		
+		int height_separation = world.getHeight()/3;
+		int width_separation = world.getWidth()/3;
+		int sep = 50;
+		
+		// First Block - Top Forest
+		for(int j = 0; j < num_instances; j++) {
+			do { loc = new Int2D(state.random.nextInt(world.getWidth()), state.random.nextInt(height_separation - sep/2)); }
+			while ( occupied[loc.x][loc.y] != null);
+			
+			addObject(Tree.class, loc);
+		}
+		
+		// Bush Block - Bushes below the Forest
+		for(int j = 0; j < num_instances; j++) {
+			do { loc = new Int2D(state.random.nextInt(world.getWidth()), state.random.nextInt(30) + (height_separation - 30/2)); }
+			while ( occupied[loc.x][loc.y] != null);
+			
+			addObject(Bush.class, loc);
+		}
+		
+		// Central Block - House neighborhood
+		for(int j = 0; j < num_instances; j++) {
+			do { loc = new Int2D(state.random.nextInt(world.getWidth()), state.random.nextInt(height_separation - sep) + (height_separation + sep/2)); }
+			while ( occupied[loc.x][loc.y] != null);
+			
+			addObject(House.class, loc);
+		}
+		
+		// Wall Block - Wall below the neighborhood
+		for(int j = 0; j < num_instances; j++) {
+			do { loc = new Int2D(state.random.nextInt(world.getWidth()), state.random.nextInt(30) + (2*height_separation - 30/2)); }
+			while ( occupied[loc.x][loc.y] != null);
+			
+			addObject(Wall.class, loc);
+		}
+		
+		// Down Left Block - Forest
+		for(int j = 0; j < num_instances; j++) {
+			do { loc = new Int2D(state.random.nextInt(width_separation - sep/2), state.random.nextInt(height_separation - sep/2) + (2*height_separation + sep/2)); }
+			while ( occupied[loc.x][loc.y] != null);
+			
+			addObject(Tree.class, loc);
+		}
+		
+		// Down Center Block - Water
+		for(int j = 0; j < num_instances; j++) {
+			do { loc = new Int2D(state.random.nextInt(width_separation) + (width_separation), state.random.nextInt(height_separation - sep/2) + (2*height_separation + sep/2)); }
+			while ( occupied[loc.x][loc.y] != null);
+			
+			addObject(Water.class, loc);
+		}
+		
+		// Down Right Block - Forest
+		for(int j = 0; j < num_instances; j++) {
+			do { loc = new Int2D(state.random.nextInt(width_separation - sep/2) + (2*width_separation + sep/2), state.random.nextInt(height_separation - sep/2) + (2*height_separation + sep/2)); }
+			while ( occupied[loc.x][loc.y] != null);
+			
+			addObject(Tree.class, loc);
 		}
 	}
 	

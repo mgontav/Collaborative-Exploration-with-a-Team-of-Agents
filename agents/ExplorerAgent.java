@@ -14,9 +14,9 @@ import sim.util.Int2D;
 
 public class ExplorerAgent implements sim.portrayal.Oriented2D {
 
+
 	private static final long serialVersionUID = 1L;
 	private float INTEREST_THRESHOLD = 55;
-
 	private final double STEP = Math.sqrt(2);
 	private final int viewRange = 40;
 	
@@ -201,24 +201,25 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 			double sizeDist = Math.abs(obj.size - prot.size) / Utils.MAX_SIZE;
 
 			// Correlation
-			corr = 1 - (0.5 * colorDist + 0.5 * sizeDist);
+			corr = 1 - (0.4 * colorDist + 0.6 * sizeDist);
 			// Saturation
 			corr = Utils.saturate(corr, prot.nOccurrs);
 
-			probs.put(prot.thisClass, corr);
-			corrSum += corr;
+			probs.put(prot.thisClass, corr*corr*corr);
+			corrSum += corr*corr*corr;
 
 			unknownCorr += (1 - corr) / nClasses;
 		}
 
 		if (nClasses == 0)
 			unknownCorr = 1.0;
-		probs.put(SimObject.class, unknownCorr);
-		corrSum += unknownCorr;
+		probs.put(SimObject.class, unknownCorr*unknownCorr*unknownCorr);
+		corrSum += unknownCorr*unknownCorr*unknownCorr;
 
 		for (Class c : probs.keySet()) {
-			System.out.println(c.getSimpleName() + " : " + probs.get(c));
+			
 			probs.put(c, probs.get(c) / corrSum);
+			System.out.println(c.getSimpleName() + " : " + probs.get(c));
 		}
 
 		return probs;

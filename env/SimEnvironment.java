@@ -132,10 +132,19 @@ public class SimEnvironment implements Steppable{
 				
 				nObjs += real != null ? 1 : 0;
 				objsSeen += identified != null ? 1 : 0;
-				nErrors += ((real != null) && (real != identified)) ? 1 : 0;
+				nErrors += ((real != null && identified != null) && (real != identified)) ? 1 : 0;
 			}
 		}
 		
+		//System.err.println("SEEN: " + objsSeen);
+		//System.err.println("EXIST: " + nObjs);
+		
+		System.err.println("-------------------------");
+		System.err.println("STATISTICS AT STEP: " + this.step);
+		System.err.println("-------------------------");
+		System.err.println("% OF OBJECTS SEEN: " + ((float)objsSeen/(float)nObjs)*100.0);
+		System.err.println("% OF ERROR: " + ((float)nErrors/(float)objsSeen)*100.0);
+		System.err.println("-------------------------");
 	}
 
 	public MapperAgent getMapper() {

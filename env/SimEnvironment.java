@@ -1,5 +1,6 @@
 package sim.app.exploration.env;
 
+import java.lang.reflect.Constructor;
 import java.util.Vector;
 
 import sim.engine.SimState;
@@ -8,6 +9,7 @@ import sim.field.grid.SparseGrid2D;
 import sim.util.Bag;
 import sim.util.Int2D;
 import sim.app.exploration.agents.*;
+import sim.app.exploration.core.Simulator;
 import sim.app.exploration.objects.Bush;
 import sim.app.exploration.objects.House;
 import sim.app.exploration.objects.SimObject;
@@ -24,15 +26,17 @@ public class SimEnvironment implements Steppable{
 	private Vector<ExplorerAgent> explorers;
 	private MapperAgent mapper;
 	private BrokerAgent broker;
+	private Class[] occupied;
 	
 	public SimEnvironment(SimState state, int width, int height, int nAgents){
 		
 		this.world = new SparseGrid2D(width, height);
+		this.occupied = new Class[Simulator.WIDTH * Simulator.HEIGHT];
 		
 		this.explorers = new Vector<ExplorerAgent>(nAgents);
 		this.mapper = new MapperAgent(width, height);
 		this.broker = new BrokerAgent();
-		
+		                          
 		this.setup(state);
 	}
 	
@@ -54,54 +58,40 @@ public class SimEnvironment implements Steppable{
 			explorer.broker = broker;
 		}
 		
-		//System.out.println("\n\nWALL:\t" + Wall.RED_DELTA + "\t"+Wall.GREEN_DELTA+"\t"+Wall.BLUE_DELTA+"\t"+Wall.SIZE_DELTA+"\n");
+		buildRandomMap(state);
+	}
+	
+	private void buildRandomMap(SimState state) {
+		Class classes[] = {Wall.class, Tree.class, Bush.class, Water.class, House.class};
+		int numberOfInstances[] = {400, 200, 200, 100, 20};
+		Int2D loc;
 		
-		for(int i = 0; i<400; i++){
-			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
-			Wall w = new Wall(loc.x,loc.y);
+		for (int i = 0; i < classes.length; i++) {
 			
-			//System.out.println("Wall:\t"+w.color.getRed()+"\t"+w.color.getGreen()+"\t"+w.color.getBlue()+"\t"+w.getSize());
+			for(int j = 0; j < numberOfInstances[i]; j++) {
+				do { loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight())); }
+				while (occupied[loc.x * loc.y] != null);
+				
+				addObject(classes[i], loc);
+			}
 			
-			world.setObjectLocation(w,loc);
+		}
+	}
+	
+	private void addObject(Class c, Int2D loc) {
+		Class[] params = {int.class,int.class};
+		Object[] args = {loc.x,loc.y};
+		SimObject obj;
+		
+		try {
+			Constructor cons = c.getConstructor(params);	
+			obj = (SimObject) cons.newInstance(args);
 		}
 		
-		//System.out.println("\n\nTREE:\t" + Tree.RED_DELTA + "\t"+Tree.GREEN_DELTA+"\t"+Tree.BLUE_DELTA+"\t"+Tree.SIZE_DELTA+"\n");
+		catch (Exception e) { System.err.println("Oops. See addObject."); return; };
 		
-		for(int i = 0; i<200; i++){
-			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
-			Tree t = new Tree(loc.x,loc.y);
-			
-			//System.out.println("Tree:\t"+t.color.getRed()+"\t"+t.color.getGreen()+"\t"+t.color.getBlue()+"\t"+t.getSize());
-			
-			world.setObjectLocation(t,loc);
-		}
-		
-		for(int i = 0; i<200; i++){
-			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
-			Bush b = new Bush(loc.x,loc.y);
-			
-			//System.out.println("Tree:\t"+t.color.getRed()+"\t"+t.color.getGreen()+"\t"+t.color.getBlue()+"\t"+t.getSize());
-			
-			world.setObjectLocation(b,loc);
-		}
-		
-		for(int i = 0; i<100; i++){
-			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
-			Water w = new Water(loc.x,loc.y);
-			
-			//System.out.println("Tree:\t"+t.color.getRed()+"\t"+t.color.getGreen()+"\t"+t.color.getBlue()+"\t"+t.getSize());
-			
-			world.setObjectLocation(w,loc);
-		}
-		
-		for(int i = 0; i<20; i++){
-			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
-			House h = new House(loc.x,loc.y);
-			
-			//System.out.println("Tree:\t"+t.color.getRed()+"\t"+t.color.getGreen()+"\t"+t.color.getBlue()+"\t"+t.getSize());
-			
-			world.setObjectLocation(h,loc);
-		}
+		world.setObjectLocation(obj,loc);
+		occupied[loc.x * loc.y] = c;
 	}
 
 	

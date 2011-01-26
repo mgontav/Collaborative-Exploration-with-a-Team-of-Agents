@@ -2,7 +2,9 @@ package sim.app.exploration.agents;
 
 import java.awt.Color;
 import java.lang.reflect.Constructor;
+import java.util.Vector;
 
+import sim.app.exploration.objects.Prototype;
 import sim.app.exploration.objects.SimObject;
 import sim.app.exploration.objects.Wall;
 import sim.field.grid.SparseGrid2D;
@@ -13,10 +15,12 @@ public class MapperAgent {
 
 	public SparseGrid2D knownWorld;
 	public Class[][] identifiedObjects;
+	public Vector<Prototype> knownObjects;
 	
 	public MapperAgent(int width, int height){
 		knownWorld = new SparseGrid2D(width, height);
 		identifiedObjects = new Class[width][height];
+		this.knownObjects = new Vector<Prototype>();
 	}
 	
 	/**
@@ -97,6 +101,18 @@ public class MapperAgent {
 		}
 		
 		knownWorld.setObjectLocation(obj, loc);
+		
+	}
+
+	public void addPrototype(SimObject obj, Class class1) {
+		for(Prototype p : this.knownObjects){
+			if(class1 == p.thisClass){
+				p.addOccurrence(obj.size, obj.color);
+				return;
+			}
+		}
+		
+		this.knownObjects.add(new Prototype(class1, obj.size, obj.color));
 		
 	}
 

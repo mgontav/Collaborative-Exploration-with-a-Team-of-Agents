@@ -3,6 +3,8 @@ package sim.app.exploration.env;
 import java.lang.reflect.Constructor;
 import java.util.Vector;
 
+import java.io.*;
+
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.grid.SparseGrid2D;
@@ -30,6 +32,8 @@ public class SimEnvironment implements Steppable{
 	private int step = 0;
 	private final int maxSteps = 5000;
 	
+	FileWriter writer;
+	
 	public SimEnvironment(SimState state, int width, int height, int nAgents){
 		
 		this.world = new SparseGrid2D(width, height);
@@ -40,6 +44,12 @@ public class SimEnvironment implements Steppable{
 		this.broker = new BrokerAgent();
 		                          
 		this.setup(state);
+		
+		try {
+			writer = new FileWriter("stats.csv");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -91,11 +101,11 @@ public class SimEnvironment implements Steppable{
 		
 		// Define the two classes
 		Class outer_class = Tree.class;
-		Class inner_class = Water.class;
+		Class inner_class = Bush.class;
 		
 		// Number of instances
-		int num_outer = 500;
-		int num_inner = 200;
+		int num_outer = 300;
+		int num_inner = 300;
 		
 		// Define the size of the inner square
 		int inner_width = world.getWidth() / 2;
@@ -212,6 +222,11 @@ public class SimEnvironment implements Steppable{
 		step = step + 1;
 		
 		if(step > maxSteps){
+			try {
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			state.finish();
 		}
 		
@@ -245,15 +260,21 @@ public class SimEnvironment implements Steppable{
 			}
 		}
 		
-		//System.err.println("SEEN: " + objsSeen);
-		//System.err.println("EXIST: " + nObjs);
+		System.err.println("SEEN: " + objsSeen);
+		System.err.println("EXIST: " + nObjs);
 		
 		System.err.println("-------------------------");
 		System.err.println("STATISTICS AT STEP: " + this.step);
 		System.err.println("-------------------------");
-		System.err.println("% OF OBJECTS SEEN: " + ((float)objsSeen/(float)nObjs)*100.0);
-		System.err.println("% OF ERROR: " + ((float)nErrors/(float)objsSeen)*100.0);
+		System.err.println("% OF OBJECTS SEEN: " + ((double)objsSeen/(double)nObjs)*100.0);
+		System.err.println("% OF ERROR: " + ((double)nErrors/(double)objsSeen)*100.0);
 		System.err.println("-------------------------");
+		
+		try {
+			writer.append("" + step + " , " + ((double)objsSeen/(double)nObjs)*100.0 + " , " + ((double)nErrors/(double)objsSeen)*100.0 + "\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public MapperAgent getMapper() {

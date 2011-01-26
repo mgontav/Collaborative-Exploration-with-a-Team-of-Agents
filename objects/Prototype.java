@@ -25,8 +25,8 @@ public class Prototype {
 	}
 	
 	public void addOccurrence(double s, Color c){
-		this.size = (this.size + s)/2.0;
-		this.color = Utils.avgColor(this.color, c);
+		this.size = (this.size*nOccurrs + s)/(nOccurrs+1);
+		this.color = Utils.avgColor(this.color, c, nOccurrs);
 		this.nOccurrs += 1;
 	}
 }

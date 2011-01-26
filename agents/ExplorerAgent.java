@@ -15,7 +15,7 @@ import sim.util.Int2D;
 public class ExplorerAgent implements sim.portrayal.Oriented2D {
 
 	private static final long serialVersionUID = 1L;
-	private float INTEREST_THRESHOLD = 55;
+	private float INTEREST_THRESHOLD = 0;
 	private final double STEP = Math.sqrt(2);
 	private final int viewRange = 40;
 	
@@ -66,8 +66,8 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 
 						mapper.identify(obj, highest);
 						Class real = env.identifyObject(obj.loc).getClass();
-						if (highest != real)
-							System.err.println(real.getSimpleName());
+						//if (highest != real)
+						//	System.err.println(real.getSimpleName());
 						
 
 						//System.out.println();

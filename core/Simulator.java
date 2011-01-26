@@ -15,7 +15,7 @@ public class Simulator extends SimState{
 
 	private static final long serialVersionUID = 1L;
 	
-	private final static int N_EXPLORERS = 5;
+	private final static int N_EXPLORERS = 10;
 	public final static int WIDTH = 400;
 	public final static int HEIGHT = 300;
 	public final static int limitRadius = (int) (Math.max(WIDTH, HEIGHT) * 0.25);	// The 0.25 should be RAIUS_RATIO or something

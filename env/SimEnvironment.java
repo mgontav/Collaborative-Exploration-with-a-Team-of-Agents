@@ -59,24 +59,49 @@ public class SimEnvironment implements Steppable{
 	private void setup(SimState state){
 		
 		addExplorersRandomly(state);
+		//addExplorersCornersCenter(state);	// This always adds 8 Explorers
 		
-		buildRandomMap(state);
+		//buildRandomMap(state);
 		//buildDonutMap(state);
-		//buildWorldMap(state);
+		buildStructuredMap(state);
 	}
 	
 	private void addExplorersRandomly(SimState state) {
-		for(int i= 0; i<explorers.capacity(); i++){
+		for(int i= 0; i < explorers.capacity(); i++){
 			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
-			ExplorerAgent explorer = new ExplorerAgent(loc);
-			explorers.add(explorer);
-			
-			mapper.updateLocation(explorer,loc);
-			this.updateLocation(explorer, loc);
-			explorer.env = this;
-			explorer.mapper = mapper;
-			explorer.broker = broker;
+			addExplorer(state, loc);
 		}
+	}
+	
+	private void addExplorersCornersCenter(SimState state) {
+		
+		// 4 Explorers in the center of the map
+		for (int i = 0; i < 4; i++) {
+			Int2D loc = new Int2D(world.getWidth() / 2, world.getHeight() / 2);
+			addExplorer(state, loc);
+		}
+		
+		// 4 Explorers on all 4 corners
+		Int2D locs[] = new Int2D[4];
+		locs[0] = new Int2D(0, 0);
+		locs[1] = new Int2D(world.getWidth(), world.getHeight());
+		locs[2] = new Int2D(0, world.getHeight());
+		locs[3] = new Int2D(world.getWidth(), 0);
+		
+		for (Int2D l : locs)
+			addExplorer(state, l);
+		
+	}
+	
+	private void addExplorer(SimState state, Int2D loc) {
+		ExplorerAgent explorer = new ExplorerAgent(loc);
+		explorers.add(explorer);
+		
+		mapper.updateLocation(explorer,loc);
+		this.updateLocation(explorer, loc);
+		explorer.env = this;
+		explorer.mapper = mapper;
+		explorer.broker = broker;
 	}
 	
 	private void buildRandomMap(SimState state) {
@@ -133,7 +158,7 @@ public class SimEnvironment implements Steppable{
 		}
 	}
 	
-	private void buildWorldMap(SimState state) {
+	private void buildStructuredMap(SimState state) {
 		Int2D loc;
 		
 		// Number of instances per block

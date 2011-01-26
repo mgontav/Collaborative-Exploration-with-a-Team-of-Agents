@@ -83,11 +83,11 @@ public class Utils {
 		return dist;
 	}
 
-	public static Color avgColor(Color color, Color color2) {
+	public static Color avgColor(Color color, Color color2, int nOccurrs) {
 		double r1 = color.getRed(); double g1 = color.getGreen(); double b1 = color.getBlue();
 		double r2 = color2.getRed(); double g2 = color2.getGreen(); double b2 = color2.getBlue();
 		
-		Color avg = new Color((int)((r1+r2)/2.0), (int)((g1+g2)/2.0), (int)((b1+b2)/2.0));
+		Color avg = new Color((int)((r1*nOccurrs+r2)/(nOccurrs+1)), (int)((g1*nOccurrs+g2)/(nOccurrs+1)), (int)((b1*nOccurrs+b2)/(nOccurrs+1)));
 				
 		return avg;
 	}

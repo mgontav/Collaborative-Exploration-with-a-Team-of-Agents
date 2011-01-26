@@ -1,6 +1,7 @@
 package sim.app.exploration.env;
 
 import java.lang.reflect.Constructor;
+import java.util.Random;
 import java.util.Vector;
 
 import sim.engine.SimState;
@@ -61,7 +62,8 @@ public class SimEnvironment implements Steppable{
 			explorer.broker = broker;
 		}
 		
-		buildRandomMap(state);
+		//buildRandomMap(state);
+		buildDonutMap(state);
 	}
 	
 	private void buildRandomMap(SimState state) {
@@ -78,6 +80,43 @@ public class SimEnvironment implements Steppable{
 				addObject(classes[i], loc);
 			}
 			
+		}
+	}
+	
+	private void buildDonutMap(SimState state) {
+		Int2D loc;
+		
+		// Define the two classes
+		Class outer_class = Tree.class;
+		Class inner_class = Water.class;
+		
+		// Number of instances
+		int num_outer = 500;
+		int num_inner = 200;
+		
+		// Define the size of the inner square
+		int inner_width = Simulator.WIDTH / 4;
+		int inner_height = Simulator.HEIGHT / 4;
+		
+		int inner_x = (Simulator.WIDTH / 2) - (inner_width / 2);
+		int inner_y = (Simulator.HEIGHT / 2) - (inner_height / 2);
+		
+		// Add the outer instances
+		for(int j = 0; j < num_outer; j++) {
+			do { loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight())); }
+			while ( occupied[loc.x][loc.y] != null ||
+					( (loc.x >= inner_x && loc.x <= inner_x + inner_width) &&
+					(loc.y >= inner_y && loc.y <= inner_y + inner_height)));
+			
+			addObject(outer_class, loc);
+		}
+		
+		// Add the inner instances
+		for(int j = 0; j < num_inner; j++) {
+			do { loc = new Int2D(state.random.nextInt(inner_width) + inner_x, state.random.nextInt(inner_height) + inner_y); }
+			while ( occupied[loc.x][loc.y] != null);
+			
+			addObject(inner_class, loc);
 		}
 	}
 	

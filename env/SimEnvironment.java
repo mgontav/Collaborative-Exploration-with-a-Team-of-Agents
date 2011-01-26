@@ -25,6 +25,9 @@ public class SimEnvironment implements Steppable{
 	private MapperAgent mapper;
 	private BrokerAgent broker;
 	
+	private int step = 0;
+	private final int maxSteps = 5000;
+	
 	public SimEnvironment(SimState state, int width, int height, int nAgents){
 		
 		this.world = new SparseGrid2D(width, height);
@@ -107,12 +110,40 @@ public class SimEnvironment implements Steppable{
 	
 	@Override
 	public void step(SimState state) {
+		step = step + 1;
+		
+		if(step > maxSteps){
+			state.finish();
+		}
+		
+		int stepCheckpoint = maxSteps/100;
+		if( step%stepCheckpoint == 0 ){
+			printStats();
+		}
 		
 		/*
 		 * Step over all the explorers in the environment, making them step
 		 */
 		for(ExplorerAgent agent : explorers){
 			agent.step(state);
+		}
+		
+	}
+
+	private void printStats() {
+		int objsSeen = 0;
+		int nObjs = 0;
+		int nErrors = 0;
+		
+		for(int i = 0; i<world.getWidth(); i++){
+			for (int j = 0; j < world.getHeight(); j++) {
+				Class real = occupied[i][j];
+				Class identified = mapper.identifiedObjects[i][j];
+				
+				nObjs += real != null ? 1 : 0;
+				objsSeen += identified != null ? 1 : 0;
+				nErrors += ((real != null) && (real != identified)) ? 1 : 0;
+			}
 		}
 		
 	}

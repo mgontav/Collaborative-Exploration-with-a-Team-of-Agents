@@ -26,7 +26,7 @@ public class SimEnvironment implements Steppable{
 	private Vector<ExplorerAgent> explorers;
 	private MapperAgent mapper;
 	private BrokerAgent broker;
-	private Class[] occupied;
+	private Class[][] occupied;
 	
 	private int step = 0;
 	private final int maxSteps = 5000;
@@ -34,7 +34,7 @@ public class SimEnvironment implements Steppable{
 	public SimEnvironment(SimState state, int width, int height, int nAgents){
 		
 		this.world = new SparseGrid2D(width, height);
-		this.occupied = new Class[Simulator.WIDTH * Simulator.HEIGHT];
+		this.occupied = new Class[Simulator.WIDTH][Simulator.HEIGHT];
 		
 		this.explorers = new Vector<ExplorerAgent>(nAgents);
 		this.mapper = new MapperAgent(width, height);
@@ -73,7 +73,7 @@ public class SimEnvironment implements Steppable{
 			
 			for(int j = 0; j < numberOfInstances[i]; j++) {
 				do { loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight())); }
-				while (occupied[loc.x * loc.y] != null);
+				while (occupied[loc.x][loc.y] != null);
 				
 				addObject(classes[i], loc);
 			}
@@ -94,7 +94,7 @@ public class SimEnvironment implements Steppable{
 		catch (Exception e) { System.err.println("Oops. See addObject."); return; };
 		
 		world.setObjectLocation(obj,loc);
-		occupied[loc.x * loc.y] = c;
+		occupied[loc.x][loc.y] = c;
 	}
 
 	

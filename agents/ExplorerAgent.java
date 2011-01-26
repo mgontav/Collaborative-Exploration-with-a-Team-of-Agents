@@ -15,7 +15,7 @@ import sim.util.Int2D;
 public class ExplorerAgent implements sim.portrayal.Oriented2D {
 
 	private static final long serialVersionUID = 1L;
-	private float INTEREST_THRESHOLD = 0;
+	private float INTEREST_THRESHOLD = 55;
 
 	private final double STEP = Math.sqrt(2);
 	private final int viewRange = 40;

@@ -15,7 +15,7 @@ import sim.util.Int2D;
 public class ExplorerAgent implements sim.portrayal.Oriented2D {
 
 	private static final long serialVersionUID = 1L;
-	private float INTEREST_THRESHOLD = 53;
+	private float INTEREST_THRESHOLD = 60;
 	private final double STEP = Math.sqrt(2);
 	private final int viewRange = 40;
 	
@@ -56,8 +56,8 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 					Hashtable<Class, Double> probs = getProbabilityDist(obj);
 
 					float interest = getObjectInterest(probs);
-					System.out.println("OBJECT AT: (" + obj.loc.x + ","
-							+ obj.loc.y + "). INTEREST: " + interest);
+					//System.out.println("OBJECT AT: (" + obj.loc.x + ","
+					//		+ obj.loc.y + "). INTEREST: " + interest);
 
 					// If not interesting enough, classify it to the highest
 					// prob
@@ -66,17 +66,11 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 
 						mapper.identify(obj, highest);
 						Class real = env.identifyObject(obj.loc).getClass();
-						if (highest != real) {
+						if (highest != real)
 							System.err.println(real.getSimpleName());
-							System.err.println(real.getSimpleName());
-							System.err.println(real.getSimpleName());
-							System.err.println(real.getSimpleName());
-							System.err.println(real.getSimpleName());
-							System.err.println(real.getSimpleName());
-							System.err.println(real.getSimpleName());
-						}
+						
 
-						System.out.println();
+						//System.out.println();
 						// addPrototype(obj, highest);
 						broker.removePointOfInterest(obj.loc);
 
@@ -111,8 +105,8 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 			// the broker
 			if (target == null) {
 				target = broker.requestTarget(loc);
-				System.out.println("NEW TARGET: X: " + target.x + " Y: "
-						+ target.y);
+				//System.out.println("NEW TARGET: X: " + target.x + " Y: "
+				//		+ target.y);
 			}
 
 			// Agent movement
@@ -146,8 +140,8 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 
 		entropyInterest = Utils.entropy(prob);
 
-		System.out.println("ENTROPY: " + entropyInterest + " | UNKNOWN: "
-				+ unknownInterest);
+		//System.out.println("ENTROPY: " + entropyInterest + " | UNKNOWN: "
+		//		+ unknownInterest);
 
 		double interest = (entropyInterest > unknownInterest ? entropyInterest
 				: unknownInterest) * 100;
@@ -200,7 +194,7 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 			double sizeDist = Math.abs(obj.size - prot.size) / Utils.MAX_SIZE;
 
 			// Correlation
-			corr = 1 - (0.4 * colorDist + 0.6 * sizeDist);
+			corr = 1 - (0.5 * colorDist + 0.5 * sizeDist);
 			// Saturation
 			corr = Utils.saturate(corr, prot.nOccurrs);
 
@@ -218,7 +212,7 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 		for (Class c : probs.keySet()) {
 			
 			probs.put(c, probs.get(c) / corrSum);
-			System.out.println(c.getSimpleName() + " : " + probs.get(c));
+			//System.out.println(c.getSimpleName() + " : " + probs.get(c));
 		}
 
 		return probs;

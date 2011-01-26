@@ -33,7 +33,7 @@ public class BrokerAgent {
 			for (PointOfInterest PoI : pointsOfInterest) {
 				score = PoI.interestMeasure - ( (agentPos.distance(PoI.loc) * 100) / Simulator.limitRadius);
 				
-				System.out.println("[Broker] Score for " + PoI + ": " + score);
+				//System.out.println("[Broker] Score for " + PoI + ": " + score);
 				
 				if (score > bestScore) {
 					bestScore = score;
@@ -52,8 +52,8 @@ public class BrokerAgent {
 				removedPoIs.add(target_PoI);
 			}
 			
-			System.out.println("[Broker] Best score: " + bestScore);
-			System.out.println("[Broker] Target: " + target);
+			//System.out.println("[Broker] Best score: " + bestScore);
+			//System.out.println("[Broker] Target: " + target);
 		}
 		
 		return target;
@@ -64,7 +64,7 @@ public class BrokerAgent {
 		
 		if (!pointsOfInterest.contains(PoI) && !removedPoIs.contains(PoI)) {
 			pointsOfInterest.add(PoI);
-			System.out.println("[Broker] PoI added: " + PoI.loc);
+			//System.out.println("[Broker] PoI added: " + PoI.loc);
 		}
 	}
 	
@@ -72,9 +72,9 @@ public class BrokerAgent {
 		PointOfInterest tmp = new PointOfInterest(loc, 1);
 		
 		if (pointsOfInterest.contains(tmp)) {
-			System.out.println("[Broker] Removing " + loc + " ("+ pointsOfInterest.size() + ")");
+			//System.out.println("[Broker] Removing " + loc + " ("+ pointsOfInterest.size() + ")");
 			pointsOfInterest.remove(tmp);
-			System.out.println("[Broker] Now with " + pointsOfInterest.size());
+			//System.out.println("[Broker] Now with " + pointsOfInterest.size());
 			
 			removedPoIs.add(tmp);
 		}

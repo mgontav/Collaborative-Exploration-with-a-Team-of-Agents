@@ -59,7 +59,7 @@ public class MapperAgent {
 	
 	public void identify(SimObject obj, Class highest) {
 		
-		System.out.println("IDENTIFYING OBJ AT (" + obj.loc.x + "," + obj.loc.y + ") AS " + highest.getName());
+		//System.out.println("IDENTIFYING OBJ AT (" + obj.loc.x + "," + obj.loc.y + ") AS " + highest.getName());
 		
 		Int2D loc = obj.loc;
 		

@@ -60,9 +60,9 @@ public class SimEnvironment implements Steppable{
 		
 		addExplorersRandomly(state);
 		
-		//buildRandomMap(state);
+		buildRandomMap(state);
 		//buildDonutMap(state);
-		buildWorldMap(state);
+		//buildWorldMap(state);
 	}
 	
 	private void addExplorersRandomly(SimState state) {
@@ -104,8 +104,8 @@ public class SimEnvironment implements Steppable{
 		Class inner_class = Bush.class;
 		
 		// Number of instances
-		int num_outer = 300;
-		int num_inner = 300;
+		int num_outer = 500;
+		int num_inner = 500;
 		
 		// Define the size of the inner square
 		int inner_width = world.getWidth() / 2;
@@ -266,8 +266,8 @@ public class SimEnvironment implements Steppable{
 		System.err.println("-------------------------");
 		System.err.println("STATISTICS AT STEP: " + this.step);
 		System.err.println("-------------------------");
-		System.err.println("% OF OBJECTS SEEN: " + ((double)objsSeen/(double)nObjs)*100.0);
-		System.err.println("% OF ERROR: " + ((double)nErrors/(double)objsSeen)*100.0);
+		System.err.println("% OF OBJECTS SEEN: " + (int) Math.ceil(((double)objsSeen/(double)nObjs)*100) + "%");
+		System.err.println("% OF ERROR: " + ((double)nErrors/(double)objsSeen)*100.0 + "%");
 		System.err.println("-------------------------");
 		
 		try {

@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 
 import sim.app.exploration.agents.ExplorerAgent;
 import sim.app.exploration.objects.Bush;
+import sim.app.exploration.objects.House;
 import sim.app.exploration.objects.SimObject;
 import sim.app.exploration.objects.Tree;
 import sim.app.exploration.objects.Wall;
@@ -61,7 +62,7 @@ public class Viewer extends GUIState{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void setupPortrayals(){
 		// tell the portrayals what to portray and how to portray them
-	    Class objects[] = {Tree.class, Wall.class, SimObject.class, Bush.class, Water.class};
+	    Class objects[] = {Tree.class, Wall.class, SimObject.class, Bush.class, Water.class, House.class};
 		
 		
 	    knownWorld.setField( ((Simulator)state).env.getMapper().knownWorld);

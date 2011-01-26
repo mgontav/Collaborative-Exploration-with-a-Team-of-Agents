@@ -29,7 +29,7 @@ public class Bush extends SimObject{
 	}
 	
 	public static Portrayal getPortrayal(){
-		return new RectanglePortrayal2D(new Color(0, 180, 0), size);
+		return new RectanglePortrayal2D(new Color(0, 100, 0), size);
 	}
 
 }

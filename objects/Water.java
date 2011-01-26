@@ -12,7 +12,7 @@ public class Water extends SimObject{
 	
 	public static final int RED_DELTA = 0;
 	public static final int GREEN_DELTA = 10;
-	public static final int BLUE_DELTA = 20;
+	public static final int BLUE_DELTA = 50;
 	public static final double SIZE_DELTA = 4.0;
 	
 	public Water(){
@@ -20,7 +20,7 @@ public class Water extends SimObject{
 	}
 	
 	public Water(int x, int y){
-		super(new Int2D(x,y), Color.BLUE, size);
+		super(new Int2D(x,y), new Color(0, 10, 205), size);
 		this.introduceRandomness(RED_DELTA, GREEN_DELTA, BLUE_DELTA, SIZE_DELTA);
 	}
 

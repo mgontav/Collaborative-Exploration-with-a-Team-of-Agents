@@ -9,6 +9,7 @@ import sim.util.Bag;
 import sim.util.Int2D;
 import sim.app.exploration.agents.*;
 import sim.app.exploration.objects.Bush;
+import sim.app.exploration.objects.House;
 import sim.app.exploration.objects.SimObject;
 import sim.app.exploration.objects.Tree;
 import sim.app.exploration.objects.Wall;
@@ -91,6 +92,15 @@ public class SimEnvironment implements Steppable{
 			//System.out.println("Tree:\t"+t.color.getRed()+"\t"+t.color.getGreen()+"\t"+t.color.getBlue()+"\t"+t.getSize());
 			
 			world.setObjectLocation(w,loc);
+		}
+		
+		for(int i = 0; i<20; i++){
+			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
+			House h = new House(loc.x,loc.y);
+			
+			//System.out.println("Tree:\t"+t.color.getRed()+"\t"+t.color.getGreen()+"\t"+t.color.getBlue()+"\t"+t.getSize());
+			
+			world.setObjectLocation(h,loc);
 		}
 	}
 

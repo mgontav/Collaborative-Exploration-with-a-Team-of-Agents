@@ -50,6 +50,13 @@ public class SimEnvironment implements Steppable{
 	 */
 	private void setup(SimState state){
 		
+		addExplorersRandomly(state);
+		
+		//buildRandomMap(state);
+		buildDonutMap(state);
+	}
+	
+	private void addExplorersRandomly(SimState state) {
 		for(int i= 0; i<explorers.capacity(); i++){
 			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
 			ExplorerAgent explorer = new ExplorerAgent(loc);
@@ -61,9 +68,6 @@ public class SimEnvironment implements Steppable{
 			explorer.mapper = mapper;
 			explorer.broker = broker;
 		}
-		
-		//buildRandomMap(state);
-		buildDonutMap(state);
 	}
 	
 	private void buildRandomMap(SimState state) {
@@ -95,8 +99,8 @@ public class SimEnvironment implements Steppable{
 		int num_inner = 200;
 		
 		// Define the size of the inner square
-		int inner_width = Simulator.WIDTH / 4;
-		int inner_height = Simulator.HEIGHT / 4;
+		int inner_width = Simulator.WIDTH / 2;
+		int inner_height = Simulator.HEIGHT / 2;
 		
 		int inner_x = (Simulator.WIDTH / 2) - (inner_width / 2);
 		int inner_y = (Simulator.HEIGHT / 2) - (inner_height / 2);

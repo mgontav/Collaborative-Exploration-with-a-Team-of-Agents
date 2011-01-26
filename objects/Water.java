@@ -3,7 +3,6 @@ package sim.app.exploration.objects;
 import java.awt.Color;
 
 import sim.portrayal.Portrayal;
-import sim.portrayal.simple.CircledPortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.util.Int2D;
 

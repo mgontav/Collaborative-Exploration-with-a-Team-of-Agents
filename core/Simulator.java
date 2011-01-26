@@ -40,4 +40,11 @@ public class Simulator extends SimState{
 		// Now, everything else is up to the environment
 	}
 
+	public static void main(String[] args)
+    {
+		doLoop(Simulator.class, args);
+		System.exit(0);
+    }    
 }
+
+

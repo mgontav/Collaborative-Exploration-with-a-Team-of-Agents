@@ -4,10 +4,6 @@ import sim.app.exploration.env.SimEnvironment;
 import sim.engine.SimState;
 
 /**
- * A simple demo intended to serve as an example of the Mason simulation tool.
- * This simulation puts a couple of exploring agents on a grid-field and has them
- * communicate with a master agent to pick the next location to go to and share the
- * mapping information;
  * @author Miguel Tavares, Pedro Gaspar
  *
  */

@@ -6,7 +6,6 @@ import java.util.Vector;
 
 import sim.app.exploration.objects.Prototype;
 import sim.app.exploration.objects.SimObject;
-import sim.app.exploration.objects.Wall;
 import sim.field.grid.SparseGrid2D;
 import sim.util.Bag;
 import sim.util.Int2D;
@@ -34,8 +33,6 @@ public class MapperAgent {
 			// If the object is not known to the world
 			if(knownWorld.getObjectLocation(o) == null){
 				
-				//if(o instanceof Wall)
-				//	addWall((Wall) o);
 				SimObject s = (SimObject) o;
 				knownWorld.setObjectLocation(s, s.getLoc().x, s.getLoc().y);
 				
@@ -85,7 +82,6 @@ public class MapperAgent {
 	}
 
 	public void addObject(SimObject obj) {
-		// TODO Auto-generated method stub
 		Int2D loc = obj.loc;
 		
 		Bag temp = knownWorld.getObjectsAtLocation(loc.x, loc.y);

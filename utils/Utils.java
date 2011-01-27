@@ -17,8 +17,7 @@ public class Utils {
 	public static double interestFunction(double prob){
 		double interest;
 		
-		//2 - multiplying factor to make it scale better =P
-		//Magic numbers - they work, BITCHES.
+		// 2 - multiplying factor to make it scale better =P
 		interest = Math.tanh(2*prob);
 		
 		return interest;

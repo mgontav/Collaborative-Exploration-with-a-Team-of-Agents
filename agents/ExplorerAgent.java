@@ -15,7 +15,7 @@ import sim.util.Int2D;
 public class ExplorerAgent implements sim.portrayal.Oriented2D {
 
 	private static final long serialVersionUID = 1L;
-	private float INTEREST_THRESHOLD = 0;
+	private float INTEREST_THRESHOLD = 65;
 	private final double STEP = Math.sqrt(2);
 	private final int viewRange = 40;
 	
@@ -59,8 +59,7 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 					//System.out.println("OBJECT AT: (" + obj.loc.x + ","
 					//		+ obj.loc.y + "). INTEREST: " + interest);
 
-					// If not interesting enough, classify it to the highest
-					// prob
+					// If not interesting enough, classify it to the highest prob
 					if (interest < INTEREST_THRESHOLD) {
 						Class highest = Utils.getHighestProb(probs);
 
@@ -69,9 +68,6 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 						//if (highest != real)
 						//	System.err.println(real.getSimpleName());
 						
-
-						//System.out.println();
-						// addPrototype(obj, highest);
 						broker.removePointOfInterest(obj.loc);
 
 					} else {
@@ -143,8 +139,7 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 		//System.out.println("ENTROPY: " + entropyInterest + " | UNKNOWN: "
 		//		+ unknownInterest);
 
-		double interest = (entropyInterest > unknownInterest ? entropyInterest
-				: unknownInterest) * 100;
+		double interest = (entropyInterest > unknownInterest ? entropyInterest : unknownInterest) * 100;
 
 		return (int) Math.round(interest);
 	}

@@ -44,7 +44,7 @@ public class Viewer extends GUIState{
     	super(state);
     }
 	
-	public static String getName() { return "Exploration Demo: IA 2010"; }
+	public static String getName() { return "Collaborative Exploration: IA 2010"; }
 
 	public void start(){
     	super.start();
@@ -100,7 +100,6 @@ public class Viewer extends GUIState{
 	    displayFrame.setTitle("Exploration Demo");
 	    c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
 	    displayFrame.setVisible(true);
-	    //display.attach( explorers, "Explorer Agents" );
 	    display.attach( knownWorld, "Known world objects");
     }
 	

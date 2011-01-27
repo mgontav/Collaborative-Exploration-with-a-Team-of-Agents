@@ -66,6 +66,8 @@ public class SimEnvironment implements Steppable{
 		buildStructuredMap(state);
 	}
 	
+	/* Explorer Adding Methods */
+	
 	private void addExplorersRandomly(SimState state) {
 		for(int i= 0; i < explorers.capacity(); i++){
 			Int2D loc = new Int2D(state.random.nextInt(world.getWidth()),state.random.nextInt(world.getHeight()));
@@ -103,6 +105,8 @@ public class SimEnvironment implements Steppable{
 		explorer.mapper = mapper;
 		explorer.broker = broker;
 	}
+	
+	/* Map Generation Methods */
 	
 	private void buildRandomMap(SimState state) {
 		Class classes[] = {Wall.class, Tree.class, Bush.class, Water.class, House.class};
@@ -241,6 +245,7 @@ public class SimEnvironment implements Steppable{
 		occupied[loc.x][loc.y] = c;
 	}
 
+	/* End of Map Methods */
 	
 	@Override
 	public void step(SimState state) {

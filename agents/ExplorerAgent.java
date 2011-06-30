@@ -15,7 +15,7 @@ import sim.util.Int2D;
 public class ExplorerAgent implements sim.portrayal.Oriented2D {
 
 	private static final long serialVersionUID = 1L;
-	private float INTEREST_THRESHOLD = 65;
+	private float INTEREST_THRESHOLD = 60;
 	private final double STEP = Math.sqrt(2);
 	private final int viewRange = 40;
 	
@@ -196,11 +196,16 @@ public class ExplorerAgent implements sim.portrayal.Oriented2D {
 			probs.put(prot.thisClass, corr*corr*corr);
 			corrSum += corr*corr*corr;
 
-			unknownCorr += (1 - corr) / nClasses;
+			if(corr > unknownCorr){
+				unknownCorr = corr;
+			}
 		}
 
 		if (nClasses == 0)
 			unknownCorr = 1.0;
+		else
+			unknownCorr = 1- unknownCorr;
+		
 		probs.put(SimObject.class, unknownCorr*unknownCorr*unknownCorr);
 		corrSum += unknownCorr*unknownCorr*unknownCorr;
 
